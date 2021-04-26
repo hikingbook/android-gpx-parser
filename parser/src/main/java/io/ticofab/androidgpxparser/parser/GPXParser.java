@@ -435,7 +435,7 @@ public class GPXParser {
                 continue;
             }
 
-            if (!parser.getPrefix().equals(GPXHB)) {
+            if (!parser.getNamespace().equals(GPXHB) && !parser.getPrefix().equals(GPXHB)) {
                 continue;
             }
 
