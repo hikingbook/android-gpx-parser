@@ -13,6 +13,7 @@ public abstract class Point {
     private final String mName;
     private final String mDesc;
     private final String mType;
+    private final GpxHBExtensions mExtensions;
 
     Point(Builder builder) {
         mLatitude = builder.mLatitude;
@@ -22,6 +23,7 @@ public abstract class Point {
         mName = builder.mName;
         mDesc = builder.mDesc;
         mType = builder.mType;
+        mExtensions = builder.mExtensions;
     }
 
     /**
@@ -70,6 +72,11 @@ public abstract class Point {
         return mType;
     }
 
+    public GpxHBExtensions getExtensions() {
+        return mExtensions;
+    }
+
+
     public static abstract class Builder {
         private Double mLatitude;
         private Double mLongitude;
@@ -78,6 +85,7 @@ public abstract class Point {
         private String mName;
         private String mDesc;
         private String mType;
+        private GpxHBExtensions mExtensions;
 
         public Builder setLatitude(Double latitude) {
             mLatitude = latitude;
@@ -111,6 +119,11 @@ public abstract class Point {
 
         public Builder setType(String type) {
             mType = type;
+            return this;
+        }
+
+        public Builder setExtensions(GpxHBExtensions extensions) {
+            mExtensions = extensions;
             return this;
         }
 

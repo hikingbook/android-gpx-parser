@@ -17,6 +17,7 @@ import io.ticofab.androidgpxparser.parser.domain.Bounds;
 import io.ticofab.androidgpxparser.parser.domain.Copyright;
 import io.ticofab.androidgpxparser.parser.domain.Email;
 import io.ticofab.androidgpxparser.parser.domain.Gpx;
+import io.ticofab.androidgpxparser.parser.domain.GpxHBExtensions;
 import io.ticofab.androidgpxparser.parser.domain.Link;
 import io.ticofab.androidgpxparser.parser.domain.Metadata;
 import io.ticofab.androidgpxparser.parser.domain.Point;
@@ -70,6 +71,17 @@ public class GPXParser {
     static private final String TAG_DOMAIN = "domain";
 
     static private final String namespace = null;
+
+    /**
+     * Author by robin, Date on 4/26/21.
+     * Comment: Hikingbook GPXHB tags
+     */
+    static public final String GPXHB = "gpxhb";
+    static public final String TAG_IMAGE = "image";
+    static public final String TAG_POSTSCRIPT = "postscript";
+    static public final String TAG_SPEED = "speed";
+    static public final String TAG_COURSE = "course";
+    static public final String TAG_WEATHER = "weather";
 
     public void parse(String gpxUrl, GpxFetchedAndParsed listener) {
         new FetchAndParseGPXTask(gpxUrl, listener).execute();
@@ -322,6 +334,9 @@ public class GPXParser {
                 case TAG_TYPE:
                     builder.setType(readType(parser));
                     break;
+                case TAG_EXTENSIONS:
+                    builder.setExtensions(readGpxHBExtensions(parser));
+                    break;
                 default:
                     skip(parser);
                     break;
@@ -367,6 +382,8 @@ public class GPXParser {
                     metadataBuilder.setBounds(readBounds(parser));
                     break;
                 case TAG_EXTENSIONS:
+                    metadataBuilder.setExtensions(readGpxHBExtensions(parser));
+                    break;
                 default:
                     skip(parser);
                     break;
@@ -402,6 +419,51 @@ public class GPXParser {
         }
         parser.require(XmlPullParser.END_TAG, namespace, TAG_AUTHOR);
         return authorBuilder.build();
+    }
+
+    /**
+     * Author by robin, Date on 4/26/21.
+     * Comment: Hikingbook GPXHB Extensions Parser
+     */
+    private GpxHBExtensions readGpxHBExtensions(XmlPullParser parser) throws XmlPullParserException, IOException {
+        GpxHBExtensions.Builder gpxHBBuilder = new GpxHBExtensions.Builder();
+        List<String> images = new ArrayList<>();
+
+        parser.require(XmlPullParser.START_TAG, namespace, TAG_EXTENSIONS);
+        while (loopMustContinue(parser.next())) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+
+            if (!parser.getPrefix().equals(GPXHB)) {
+                continue;
+            }
+
+            String name = parser.getName();
+            switch (name) {
+                case TAG_IMAGE:
+                    images.add(readString(parser, TAG_IMAGE));
+                    break;
+                case TAG_POSTSCRIPT:
+                    gpxHBBuilder.setPostscript(readString(parser, TAG_POSTSCRIPT));
+                    break;
+                case TAG_SPEED:
+                    gpxHBBuilder.setSpeed(Double.valueOf(readString(parser, TAG_SPEED)));
+                    break;
+                case TAG_COURSE:
+                    gpxHBBuilder.setCourse(Double.valueOf(readString(parser, TAG_COURSE)));
+                    break;
+                case TAG_WEATHER:
+                    gpxHBBuilder.setWeather(readString(parser, TAG_WEATHER));
+                    break;
+                default:
+                    skip(parser);
+                    break;
+            }
+        }
+        parser.require(XmlPullParser.END_TAG, namespace, TAG_EXTENSIONS);
+        gpxHBBuilder.setImages(images);
+        return gpxHBBuilder.build();
     }
 
     private Email readEmail(XmlPullParser parser) throws IOException, XmlPullParserException {

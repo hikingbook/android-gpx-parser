@@ -12,7 +12,7 @@ public class Metadata {
     private final DateTime mTime;
     private final String mKeywords;
     private final Bounds mBounds;
-    private final String mExtensions;
+    private final GpxHBExtensions mExtensions;
 
     private Metadata(Metadata.Builder builder) {
         mName = builder.mName;
@@ -58,7 +58,7 @@ public class Metadata {
         return mBounds;
     }
 
-    public String getExtensions() {
+    public GpxHBExtensions getExtensions() {
         return mExtensions;
     }
 
@@ -71,7 +71,7 @@ public class Metadata {
         private DateTime mTime;
         private String mKeywords;
         private Bounds mBounds;
-        private String mExtensions;
+        private GpxHBExtensions mExtensions;
 
         public Builder setName(String name) {
             mName = name;
@@ -110,6 +110,11 @@ public class Metadata {
 
         public Builder setBounds(Bounds bounds) {
             mBounds = bounds;
+            return this;
+        }
+
+        public Builder setExtensions(GpxHBExtensions extensions) {
+            mExtensions = extensions;
             return this;
         }
 
