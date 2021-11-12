@@ -82,6 +82,8 @@ public class GPXParser {
     static public final String TAG_SPEED = "speed";
     static public final String TAG_COURSE = "course";
     static public final String TAG_WEATHER = "weather";
+    static public final String TAG_FITNESS_LEVEL = "fitnesslevel";
+    static public final String TAG_LOAD_WEIGHT = "loadweight";
 
     public void parse(String gpxUrl, GpxFetchedAndParsed listener) {
         new FetchAndParseGPXTask(gpxUrl, listener).execute();
@@ -428,6 +430,7 @@ public class GPXParser {
     private GpxHBExtensions readGpxHBExtensions(XmlPullParser parser) throws XmlPullParserException, IOException {
         GpxHBExtensions.Builder gpxHBBuilder = new GpxHBExtensions.Builder();
         List<String> images = new ArrayList<>();
+        List<Float> loadWeights = new ArrayList<>();
 
         parser.require(XmlPullParser.START_TAG, namespace, TAG_EXTENSIONS);
         while (loopMustContinue(parser.next())) {
@@ -456,6 +459,12 @@ public class GPXParser {
                 case TAG_WEATHER:
                     gpxHBBuilder.setWeather(readString(parser, TAG_WEATHER));
                     break;
+                case TAG_FITNESS_LEVEL:
+                    gpxHBBuilder.setFitnessLevel(Integer.valueOf(readString(parser, TAG_FITNESS_LEVEL)));
+                    break;
+                case TAG_LOAD_WEIGHT:
+                    loadWeights.add(Float.valueOf(readString(parser, TAG_LOAD_WEIGHT)));
+                    break;
                 default:
                     skip(parser);
                     break;
@@ -463,6 +472,7 @@ public class GPXParser {
         }
         parser.require(XmlPullParser.END_TAG, namespace, TAG_EXTENSIONS);
         gpxHBBuilder.setImages(images);
+        gpxHBBuilder.setLoadWeights(loadWeights);
         return gpxHBBuilder.build();
     }
 
