@@ -16,8 +16,8 @@ import io.ticofab.androidgpxparser.parser.domain.Author;
 import io.ticofab.androidgpxparser.parser.domain.Bounds;
 import io.ticofab.androidgpxparser.parser.domain.Copyright;
 import io.ticofab.androidgpxparser.parser.domain.Email;
+import io.ticofab.androidgpxparser.parser.domain.Extensions;
 import io.ticofab.androidgpxparser.parser.domain.Gpx;
-import io.ticofab.androidgpxparser.parser.domain.GpxHBExtensions;
 import io.ticofab.androidgpxparser.parser.domain.Link;
 import io.ticofab.androidgpxparser.parser.domain.Metadata;
 import io.ticofab.androidgpxparser.parser.domain.Point;
@@ -27,8 +27,6 @@ import io.ticofab.androidgpxparser.parser.domain.Track;
 import io.ticofab.androidgpxparser.parser.domain.TrackPoint;
 import io.ticofab.androidgpxparser.parser.domain.TrackSegment;
 import io.ticofab.androidgpxparser.parser.domain.WayPoint;
-import io.ticofab.androidgpxparser.parser.task.FetchAndParseGPXTask;
-import io.ticofab.androidgpxparser.parser.task.GpxFetchedAndParsed;
 
 public class GPXParser {
 
@@ -58,7 +56,6 @@ public class GPXParser {
     static private final String TAG_COPYRIGHT = "copyright";
     static private final String TAG_KEYWORDS = "keywords";
     static private final String TAG_BOUNDS = "bounds";
-    static private final String TAG_EXTENSIONS = "extensions";
     static private final String TAG_MIN_LAT = "minlat";
     static private final String TAG_MIN_LON = "minlon";
     static private final String TAG_MAX_LAT = "maxlat";
@@ -70,6 +67,10 @@ public class GPXParser {
     static private final String TAG_ID = "id";
     static private final String TAG_DOMAIN = "domain";
 
+    // extensions-related tags
+    static private final String TAG_EXTENSIONS = "extensions";
+    static private final String TAG_SPEED = "speed";
+
     static private final String namespace = null;
 
     /**
@@ -79,15 +80,10 @@ public class GPXParser {
     static public final String GPXHB = "gpxhb";
     static public final String TAG_IMAGE = "image";
     static public final String TAG_POSTSCRIPT = "postscript";
-    static public final String TAG_SPEED = "speed";
     static public final String TAG_COURSE = "course";
     static public final String TAG_WEATHER = "weather";
     static public final String TAG_FITNESS_LEVEL = "fitnesslevel";
     static public final String TAG_LOAD_WEIGHT = "loadweight";
-
-    public void parse(String gpxUrl, GpxFetchedAndParsed listener) {
-        new FetchAndParseGPXTask(gpxUrl, listener).execute();
-    }
 
     public Gpx parse(InputStream in) throws XmlPullParserException, IOException {
         try {
@@ -337,7 +333,7 @@ public class GPXParser {
                     builder.setType(readType(parser));
                     break;
                 case TAG_EXTENSIONS:
-                    builder.setExtensions(readGpxHBExtensions(parser));
+                    builder.setExtensions(readExtensions(parser));
                     break;
                 default:
                     skip(parser);
@@ -384,7 +380,7 @@ public class GPXParser {
                     metadataBuilder.setBounds(readBounds(parser));
                     break;
                 case TAG_EXTENSIONS:
-                    metadataBuilder.setExtensions(readGpxHBExtensions(parser));
+                    metadataBuilder.setExtensions(readExtensions(parser));
                     break;
                 default:
                     skip(parser);
@@ -421,59 +417,6 @@ public class GPXParser {
         }
         parser.require(XmlPullParser.END_TAG, namespace, TAG_AUTHOR);
         return authorBuilder.build();
-    }
-
-    /**
-     * Author by robin, Date on 4/26/21.
-     * Comment: Hikingbook GPXHB Extensions Parser
-     */
-    private GpxHBExtensions readGpxHBExtensions(XmlPullParser parser) throws XmlPullParserException, IOException {
-        GpxHBExtensions.Builder gpxHBBuilder = new GpxHBExtensions.Builder();
-        List<String> images = new ArrayList<>();
-        List<Float> loadWeights = new ArrayList<>();
-
-        parser.require(XmlPullParser.START_TAG, namespace, TAG_EXTENSIONS);
-        while (loopMustContinue(parser.next())) {
-            if (parser.getEventType() != XmlPullParser.START_TAG) {
-                continue;
-            }
-
-            if (!parser.getNamespace().equals(GPXHB) && !parser.getPrefix().equals(GPXHB)) {
-                continue;
-            }
-
-            String name = parser.getName();
-            switch (name) {
-                case TAG_IMAGE:
-                    images.add(readString(parser, TAG_IMAGE));
-                    break;
-                case TAG_POSTSCRIPT:
-                    gpxHBBuilder.setPostscript(readString(parser, TAG_POSTSCRIPT));
-                    break;
-                case TAG_SPEED:
-                    gpxHBBuilder.setSpeed(Double.valueOf(readString(parser, TAG_SPEED)));
-                    break;
-                case TAG_COURSE:
-                    gpxHBBuilder.setCourse(Double.valueOf(readString(parser, TAG_COURSE)));
-                    break;
-                case TAG_WEATHER:
-                    gpxHBBuilder.setWeather(readString(parser, TAG_WEATHER));
-                    break;
-                case TAG_FITNESS_LEVEL:
-                    gpxHBBuilder.setFitnessLevel(Integer.valueOf(readString(parser, TAG_FITNESS_LEVEL)));
-                    break;
-                case TAG_LOAD_WEIGHT:
-                    loadWeights.add(Float.valueOf(readString(parser, TAG_LOAD_WEIGHT)));
-                    break;
-                default:
-                    skip(parser);
-                    break;
-            }
-        }
-        parser.require(XmlPullParser.END_TAG, namespace, TAG_EXTENSIONS);
-        gpxHBBuilder.setImages(images);
-        gpxHBBuilder.setLoadWeights(loadWeights);
-        return gpxHBBuilder.build();
     }
 
     private Email readEmail(XmlPullParser parser) throws IOException, XmlPullParserException {
@@ -582,6 +525,19 @@ public class GPXParser {
         return number;
     }
 
+    private Double readSpeed(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, namespace, TAG_SPEED);
+        double speed;
+        try {
+            speed = Double.parseDouble(readText(parser));
+        } catch (NumberFormatException e) {
+            // there was an issue parsing speed, default to 0.0
+            speed = 0.0;
+        }
+        parser.require(XmlPullParser.END_TAG, namespace, TAG_SPEED);
+        return speed;
+    }
+
     private Integer readYear(XmlPullParser parser) throws IOException, XmlPullParserException, NumberFormatException {
         parser.require(XmlPullParser.START_TAG, namespace, TAG_YEAR);
         String yearStr = readText(parser);
@@ -595,6 +551,64 @@ public class GPXParser {
         Integer year = Integer.valueOf(yearStr);
         parser.require(XmlPullParser.END_TAG, namespace, TAG_YEAR);
         return year;
+    }
+
+    private Extensions readExtensions(XmlPullParser parser) throws IOException, XmlPullParserException {
+        Extensions.Builder extensionsBuilder = new Extensions.Builder();
+
+        parser.require(XmlPullParser.START_TAG, namespace, TAG_EXTENSIONS);
+        while (loopMustContinue(parser.next())) {
+            if (parser.getEventType() != XmlPullParser.START_TAG) {
+                continue;
+            }
+            String name = parser.getName();
+
+            // Support gpxhb namespace
+            if (parser.getNamespace().equals(GPXHB) || parser.getPrefix().equals(GPXHB)) {
+                List<String> images = new ArrayList<>();
+                List<Float> loadWeights = new ArrayList<>();
+                switch (name) {
+                    case TAG_IMAGE:
+                        images.add(readString(parser, TAG_IMAGE));
+                        break;
+                    case TAG_POSTSCRIPT:
+                        extensionsBuilder.setPostscript(readString(parser, TAG_POSTSCRIPT));
+                        break;
+                    case TAG_SPEED:
+                        extensionsBuilder.setSpeed(Double.valueOf(readString(parser, TAG_SPEED)));
+                        break;
+                    case TAG_COURSE:
+                        extensionsBuilder.setCourse(Double.valueOf(readString(parser, TAG_COURSE)));
+                        break;
+                    case TAG_WEATHER:
+                        extensionsBuilder.setWeather(readString(parser, TAG_WEATHER));
+                        break;
+                    case TAG_FITNESS_LEVEL:
+                        extensionsBuilder.setFitnessLevel(Integer.valueOf(readString(parser, TAG_FITNESS_LEVEL)));
+                        break;
+                    case TAG_LOAD_WEIGHT:
+                        loadWeights.add(Float.valueOf(readString(parser, TAG_LOAD_WEIGHT)));
+                        break;
+                    default:
+                        skip(parser);
+                        break;
+                }
+                extensionsBuilder.setImages(images);
+                extensionsBuilder.setLoadWeights(loadWeights);
+            }
+            else {
+                switch (name) {
+                    case TAG_SPEED:
+                        extensionsBuilder.setSpeed(readSpeed(parser));
+                        break;
+                    default:
+                        skip(parser);
+                        break;
+                }
+            }
+        }
+        parser.require(XmlPullParser.END_TAG, namespace, TAG_EXTENSIONS);
+        return extensionsBuilder.build();
     }
 
     private void skip(XmlPullParser parser) throws XmlPullParserException, IOException {

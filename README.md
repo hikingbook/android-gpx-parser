@@ -1,24 +1,51 @@
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--gpx--parser-green.svg?style=flat)](https://android-arsenal.com/details/1/2500)
+[![](https://jitpack.io/v/ticofab/android-gpx-parser.svg)](https://jitpack.io/#ticofab/android-gpx-parser)
+
 # Android GPX Parser
 
-A library to parse XML Gpx files, built for Android. The reference schema is the [Topografix GPX 1.1](http://www.topografix.com/GPX/1/1/).
-
-[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-android--gpx--parser-green.svg?style=flat)](https://android-arsenal.com/details/1/2500)
+A library to parse XML Gpx files, built for Android. The reference schema is the [Topografix GPX 1.1](http://www.topografix.com/GPX/1/1/).  
+In addition, it parses the `speed` extension, when provided as a `double` number.
 
 ## Projects using this library:
 
+* [TomTom AmiGO](https://play.google.com/store/apps/details?id=com.tomtom.speedcams.android.map)
 * [Maplocs Cycling Route Planner](https://play.google.com/store/apps/details?id=abhiank.maplocs)
 * [Boatspeed Sailing and Tracking](https://play.google.com/store/apps/details?id=de.herberlin.boatspeed&hl=de)
+* [Routes - GPX/KML Navigation & GPS Tracker](https://play.google.com/store/apps/details?id=de.flosdorf.routenavigation&hl=de)
 
 _To have your project listed here, send me an email or open a PR._
 
-
 ## Download
 
-Grab via Gradle:
+Add the Jitpack repository to your root build file. The way you do this depends on the Gradle plugin you are using:
 
-```groovy
-api 'io.ticofab.androidgpxparser:parser:1.6.0'
-// compile 'io.ticofab.androidgpxparser:parser:1.6.0' - for gradle plugin < 3.0.0
+```
+// for gradle plugin 7.0.0 or newer (default for new apps since Android Studio Artic Fox)
+// in settings.gradle
+dependencyResolutionManagement {
+    ...
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+```
+// for older versions, in project-level build.gradle
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+Finally, in your dependencies list
+
+```
+dependencies {
+    implementation 'com.github.ticofab:android-gpx-parser:2.2.0'
+}
 ```
 
 ## Dependencies
@@ -27,19 +54,14 @@ api 'io.ticofab.androidgpxparser:parser:1.6.0'
 
 ## Usage
 
-Get a parser instance:
+In Java:
 
 ```java
-GPXParser mParser = new GPXParser(); // consider injection
-```
-
-Then there are two options: given an InputStream,
-
-```java
+GPXParser parser = new GPXParser(); // consider injection
 Gpx parsedGpx = null;
 try {
     InputStream in = getAssets().open("test.gpx");
-    parsedGpx = mParser.parse(in);
+    parsedGpx = parser.parse(in); // consider using a background thread
 } catch (IOException | XmlPullParserException e) {
     // do something with this exception
     e.printStackTrace();
@@ -52,20 +74,26 @@ if (parsedGpx == null) {
 }
 ```
 
-or you might want to fetch the Gpx track from a server and parse it. In that case, pass the track Url and a listener. Both fetching and parsing happen on a background thread.
+In Kotlin:
 
-```java
-mParser.parse("http://myserver.com/track.gpx", new GpxFetchedAndParsed() {
-    @Override
-    public void onGpxFetchedAndParsed(Gpx gpx) {
-        if (gpx == null) {
-            // error parsing track
-        } else {
-            // do something with the parsed track
-            // see included example app and tests
-        }
+```kotlin
+val parser = GPXParser() // consider injection
+try {
+    val input: InputStream = getAssets().open("test.gpx")
+    val parsedGpx: Gpx? = parser.parse(input) // consider using a background thread
+    parsedGpx?.let {
+        // do something with the parsed track
+        // see included example app and tests
+    } ?: {
+        // error parsing track
     }
-});
+} catch (e: IOException) {
+    // do something with this exception
+    e.printStackTrace()
+} catch (e: XmlPullParserException) {
+    // do something with this exception
+    e.printStackTrace()
+}
 ```
 
 ## Contribute
@@ -74,7 +102,7 @@ Contributions are welcome! Please check the [issues](https://github.com/ticofab/
 
 ## License
 
-    Copyright 2015 - 2020 Fabio Tiriticco - Fabway
+    Copyright 2015 - 2021 Fabio Tiriticco - Fabway
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
