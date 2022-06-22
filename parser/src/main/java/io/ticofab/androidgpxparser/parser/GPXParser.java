@@ -593,8 +593,12 @@ public class GPXParser {
                         skip(parser);
                         break;
                 }
-                extensionsBuilder.setImages(images);
-                extensionsBuilder.setLoadWeights(loadWeights);
+                if (!images.isEmpty()) {
+                    extensionsBuilder.setImages(images);
+                }
+                if (!loadWeights.isEmpty()) {
+                    extensionsBuilder.setLoadWeights(loadWeights);
+                }
             }
             else {
                 switch (name) {
