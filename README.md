@@ -9,9 +9,11 @@ In addition, it parses the `speed` extension, when provided as a `double` number
 ## Projects using this library:
 
 * [TomTom AmiGO](https://play.google.com/store/apps/details?id=com.tomtom.speedcams.android.map)
+* [WRPElevationChart](https://play.google.com/store/apps/details?id=de.wrpsoft.wrpelevationchartmaker&hl=de&gl=US)
 * [Maplocs Cycling Route Planner](https://play.google.com/store/apps/details?id=abhiank.maplocs)
 * [Boatspeed Sailing and Tracking](https://play.google.com/store/apps/details?id=de.herberlin.boatspeed&hl=de)
 * [Routes - GPX/KML Navigation & GPS Tracker](https://play.google.com/store/apps/details?id=de.flosdorf.routenavigation&hl=de)
+* [GPS Video Logger](https://play.google.com/store/apps/details?id=app.gps_video_logger)
 
 _To have your project listed here, send me an email or open a PR._
 
