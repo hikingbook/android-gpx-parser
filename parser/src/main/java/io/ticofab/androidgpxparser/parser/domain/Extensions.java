@@ -1,6 +1,7 @@
 package io.ticofab.androidgpxparser.parser.domain;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -29,6 +30,12 @@ public class Extensions {
     private final Double mCourse;
     private final String mWeather;
 
+    private final String mActivityType;
+
+    private final String mRouteInformation;
+
+    private final UUID mTrailID;
+
     private Extensions(Extensions.Builder builder) {
         mSpeed = builder.mSpeed;
         mImages = builder.mImages;
@@ -37,6 +44,9 @@ public class Extensions {
         mLoadWeights = builder.mLoadWeights;
         mCourse = builder.mCourse;
         mWeather = builder.mWeather;
+        mActivityType = builder.mActivityType;
+        mRouteInformation = builder.mRouteInformation;
+        mTrailID = builder.mTrailID;
     }
 
     public Double getSpeed() {
@@ -67,6 +77,18 @@ public class Extensions {
         return mWeather;
     }
 
+    public String getActivityType() {
+        return mActivityType;
+    }
+
+    public String getRouteInformation() {
+        return mRouteInformation;
+    }
+
+    public UUID getTrailID() {
+        return mTrailID;
+    }
+
     public static class Builder {
         private Double mSpeed;
 
@@ -77,6 +99,12 @@ public class Extensions {
         private List<Float> mLoadWeights;
         private Double mCourse;
         private String mWeather;
+
+        private String mActivityType;
+
+        private String mRouteInformation;
+
+        private UUID mTrailID;
 
         public Builder setSpeed(Double speed) {
             mSpeed = speed;
@@ -113,6 +141,20 @@ public class Extensions {
             return this;
         }
 
+        public Builder setActivityType(String activityType) {
+            mActivityType = activityType;
+            return this;
+        }
+
+        public Builder setRouteInformation(String routeInformation) {
+            mRouteInformation = routeInformation;
+            return this;
+        }
+
+        public Builder setTrailID(UUID trailID) {
+            mTrailID = trailID;
+            return this;
+        }
         public Extensions build() {
             return new Extensions(this);
         }

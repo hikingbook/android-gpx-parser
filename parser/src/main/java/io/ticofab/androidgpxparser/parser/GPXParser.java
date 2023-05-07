@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import io.ticofab.androidgpxparser.parser.domain.Author;
 import io.ticofab.androidgpxparser.parser.domain.Bounds;
@@ -84,6 +85,12 @@ public class GPXParser {
     static public final String TAG_WEATHER = "weather";
     static public final String TAG_FITNESS_LEVEL = "fitnesslevel";
     static public final String TAG_LOAD_WEIGHT = "loadweight";
+
+    static public final String TAG_ACTIVITY_TYPE = "activitytype";
+
+    static public final String TAG_ROUTE_INFORMATION = "routeinformation";
+
+    static public final String TAG_TRAIL_ID = "trailid";
 
     public Gpx parse(InputStream in) throws XmlPullParserException, IOException {
         try {
@@ -588,6 +595,18 @@ public class GPXParser {
                         break;
                     case TAG_LOAD_WEIGHT:
                         loadWeights.add(Float.valueOf(readString(parser, TAG_LOAD_WEIGHT)));
+                        break;
+                    case TAG_ACTIVITY_TYPE:
+                        extensionsBuilder.setActivityType(readString(parser, TAG_ACTIVITY_TYPE));
+                        break;
+                    case TAG_ROUTE_INFORMATION:
+                        extensionsBuilder.setRouteInformation(readString(parser, TAG_ROUTE_INFORMATION));
+                        break;
+                    case TAG_TRAIL_ID:
+                        try {
+                            UUID trailID = UUID.fromString(readString(parser, TAG_TRAIL_ID));
+                            extensionsBuilder.setTrailID(trailID);
+                        } catch (IllegalArgumentException e) {}
                         break;
                     default:
                         skip(parser);
