@@ -13,6 +13,8 @@ public abstract class Point {
     private final String mName;
     private final String mDesc;
     private final String mType;
+    private final String mSym;
+    private final String mCmt;
     private final Extensions mExtensions;
 
     Point(Builder builder) {
@@ -23,6 +25,8 @@ public abstract class Point {
         mName = builder.mName;
         mDesc = builder.mDesc;
         mType = builder.mType;
+        mSym = builder.mSym;
+        mCmt = builder.mCmt;
         mExtensions = builder.mExtensions;
     }
 
@@ -73,6 +77,20 @@ public abstract class Point {
     }
 
     /**
+     * @return the point symbol
+     */
+    public String getSym() {
+        return mSym;
+    }
+
+    /**
+     * @return the point cmt
+     */
+    public String getCmt() {
+        return mCmt;
+    }
+
+    /**
      * @return the extensions
      */
     public Extensions getExtensions() {
@@ -87,6 +105,8 @@ public abstract class Point {
         private String mName;
         private String mDesc;
         private String mType;
+        private String mSym;
+        private String mCmt;
         private Extensions mExtensions;
 
         public Builder setLatitude(Double latitude) {
@@ -121,6 +141,15 @@ public abstract class Point {
 
         public Builder setType(String type) {
             mType = type;
+            return this;
+        }
+
+        public Builder setSym(String sym) {
+            mSym = sym;
+            return this;
+        }
+        public Builder setCmt(String cmt) {
+            mCmt = cmt;
             return this;
         }
 

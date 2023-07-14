@@ -3,8 +3,28 @@
 
 # Android GPX Parser
 
-A library to parse XML Gpx files, built for Android. The reference schema is the [Topografix GPX 1.1](http://www.topografix.com/GPX/1/1/).  
+## Table of Contents:
+1. [Description](#description)
+2. [Module Structures](#module-structure)
+3. [Projects using this library](#projects-using-this-library)
+4. [Download](#download)
+5. [Dependencies](#dependencies)
+6. [Usage](#usage)
+7. [License](#license)
+
+## Description
+A library to parse XML GPX files, built for Android. The reference schema is the [Topografix GPX 1.1](http://www.topografix.com/GPX/1/1/).  
 In addition, it parses the `speed` extension, when provided as a `double` number.
+
+What are XML Gpx Files? 
+GPX is an XML file format to represent GPS data: coordinates, routes, waypoints, and more. 
+
+Pull requests are welcome! Please check the [issues](https://github.com/ticofab/android-gpx-parser/issues) and open a pull request when done: you will have made the world a better place.
+
+## Module Structure
+
+1. App: an example usage of the library.
+2. Parser: the library itself.
 
 ## Projects using this library:
 
@@ -15,14 +35,14 @@ In addition, it parses the `speed` extension, when provided as a `double` number
 * [Routes - GPX/KML Navigation & GPS Tracker](https://play.google.com/store/apps/details?id=de.flosdorf.routenavigation&hl=de)
 * [GPS Video Logger](https://play.google.com/store/apps/details?id=app.gps_video_logger)
 
-_To have your project listed here, send me an email or open a PR._
+_To have your project listed here, please send me an email or open a PR._
 
 ## Download
 
-Add the Jitpack repository to your root build file. The way you do this depends on the Gradle plugin you are using:
+Add the Jitpack repository to your root build file. The way you do this depends on the Gradle plugin you are using.
 
+If using Gradle plugin 7.0.0. or newer (default for new apps since Android Studio Artic Fox)
 ```
-// for gradle plugin 7.0.0 or newer (default for new apps since Android Studio Artic Fox)
 // in settings.gradle
 dependencyResolutionManagement {
     ...
@@ -33,8 +53,9 @@ dependencyResolutionManagement {
 }
 ```
 
+For older verions of Gradle: 
 ```
-// for older versions, in project-level build.gradle
+//in project-level build.gradle
 allprojects {
     repositories {
         maven { url 'https://jitpack.io' }
@@ -46,11 +67,13 @@ Finally, in your dependencies list
 
 ```
 dependencies {
-    implementation 'com.github.ticofab:android-gpx-parser:2.2.0'
+    implementation 'com.github.ticofab:android-gpx-parser:2.3.1'
 }
 ```
 
 ## Dependencies
+
+The following is an open github repo that has date and time handling. Keep in mind that the following dependency also has dependencies of its own.
 
 * [Joda DateTime for Android](https://github.com/dlew/joda-time-android)
 
@@ -96,15 +119,11 @@ try {
     // do something with this exception
     e.printStackTrace()
 }
-```
-
-## Contribute
-
-Contributions are welcome! Please check the [issues](https://github.com/ticofab/android-gpx-parser/issues) and open a pull request when done: you will have made the world a better place.
+``` 
 
 ## License
 
-    Copyright 2015 - 2021 Fabio Tiriticco - Fabway
+    Copyright 2015 - 2023 Fabio Tiriticco - Fabway
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

@@ -42,6 +42,7 @@ public class GPXParser {
     static private final String TAG_LON = "lon";
     static private final String TAG_ELEVATION = "ele";
     static private final String TAG_TIME = "time";
+    static private final String TAG_SYM = "sym";
     static private final String TAG_WAY_POINT = "wpt";
     static private final String TAG_ROUTE = "rte";
     static private final String TAG_ROUTE_POINT = "rtept";
@@ -342,6 +343,12 @@ public class GPXParser {
                 case TAG_EXTENSIONS:
                     builder.setExtensions(readExtensions(parser));
                     break;
+                case TAG_SYM:
+                    builder.setSym(readSym(parser));
+                    break;
+                case TAG_CMT:
+                    builder.setCmt(readCmt(parser));
+                    break;
                 default:
                     skip(parser);
                     break;
@@ -514,6 +521,12 @@ public class GPXParser {
         DateTime time = ISODateTimeFormat.dateTimeParser().parseDateTime(readText(parser));
         parser.require(XmlPullParser.END_TAG, namespace, TAG_TIME);
         return time;
+    }
+    private String readSym(XmlPullParser parser) throws IOException, XmlPullParserException {
+        parser.require(XmlPullParser.START_TAG, namespace, TAG_SYM);
+        String value = readText(parser);
+        parser.require(XmlPullParser.END_TAG, namespace, TAG_SYM);
+        return value;
     }
 
     private String readText(XmlPullParser parser) throws IOException, XmlPullParserException {
