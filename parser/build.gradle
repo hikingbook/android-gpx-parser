@@ -5,7 +5,6 @@ plugins {
 
 android {
     compileSdk 33
-    buildToolsVersion '33.0.0'
 
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
