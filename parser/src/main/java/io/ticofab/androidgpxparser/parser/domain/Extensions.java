@@ -36,6 +36,8 @@ public class Extensions {
 
     private final UUID mTrailID;
 
+    private final String mTrackImageURL;
+
     private Extensions(Extensions.Builder builder) {
         mSpeed = builder.mSpeed;
         mImages = builder.mImages;
@@ -47,6 +49,7 @@ public class Extensions {
         mActivityType = builder.mActivityType;
         mRouteInformation = builder.mRouteInformation;
         mTrailID = builder.mTrailID;
+        mTrackImageURL = builder.mTrackImageURL;
     }
 
     public Double getSpeed() {
@@ -89,6 +92,10 @@ public class Extensions {
         return mTrailID;
     }
 
+    public String getTrackImageURL() {
+        return mTrackImageURL;
+    }
+
     public static class Builder {
         private Double mSpeed;
 
@@ -105,6 +112,8 @@ public class Extensions {
         private String mRouteInformation;
 
         private UUID mTrailID;
+
+        private String mTrackImageURL;
 
         public Builder setSpeed(Double speed) {
             mSpeed = speed;
@@ -155,6 +164,12 @@ public class Extensions {
             mTrailID = trailID;
             return this;
         }
+
+        public Builder setTrackImageURL(String trackImageURL) {
+            mTrackImageURL = trackImageURL;
+            return this;
+        }
+
         public Extensions build() {
             return new Extensions(this);
         }

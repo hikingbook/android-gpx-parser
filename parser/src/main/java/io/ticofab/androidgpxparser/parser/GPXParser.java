@@ -93,15 +93,15 @@ public class GPXParser {
 
     static public final String TAG_TRAIL_ID = "trailid";
 
+    static public final String TAG_TRACK_IMAGE_URL = "trackimageurl";
+
     public Gpx parse(InputStream in) throws XmlPullParserException, IOException {
-        try {
+        try (in) {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
             parser.setInput(in, null);
             parser.nextTag();
             return readGpx(parser);
-        } finally {
-            in.close();
         }
     }
 
@@ -619,7 +619,10 @@ public class GPXParser {
                         try {
                             UUID trailID = UUID.fromString(readString(parser, TAG_TRAIL_ID));
                             extensionsBuilder.setTrailID(trailID);
-                        } catch (IllegalArgumentException e) {}
+                        } catch (IllegalArgumentException ignored) {}
+                        break;
+                    case TAG_TRACK_IMAGE_URL:
+                        extensionsBuilder.setTrackImageURL(readString(parser, TAG_TRACK_IMAGE_URL));
                         break;
                     default:
                         skip(parser);
@@ -633,13 +636,10 @@ public class GPXParser {
                 }
             }
             else {
-                switch (name) {
-                    case TAG_SPEED:
-                        extensionsBuilder.setSpeed(readSpeed(parser));
-                        break;
-                    default:
-                        skip(parser);
-                        break;
+                if (name.equals(TAG_SPEED)) {
+                    extensionsBuilder.setSpeed(readSpeed(parser));
+                } else {
+                    skip(parser);
                 }
             }
         }
