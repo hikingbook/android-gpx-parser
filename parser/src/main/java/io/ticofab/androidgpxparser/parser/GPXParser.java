@@ -95,6 +95,10 @@ public class GPXParser {
 
     static public final String TAG_TRACK_IMAGE_URL = "trackimageurl";
 
+    static public final String TAG_DEVICE = "device";
+
+    static public final String TAG_SOURCE = "source";
+
     public Gpx parse(InputStream in) throws XmlPullParserException, IOException {
         try (in) {
             XmlPullParser parser = Xml.newPullParser();
@@ -623,6 +627,12 @@ public class GPXParser {
                         break;
                     case TAG_TRACK_IMAGE_URL:
                         extensionsBuilder.setTrackImageURL(readString(parser, TAG_TRACK_IMAGE_URL));
+                        break;
+                    case TAG_DEVICE:
+                        extensionsBuilder.setDevice(readString(parser, TAG_DEVICE));
+                        break;
+                    case TAG_SOURCE:
+                        extensionsBuilder.setSource(readString(parser, TAG_SOURCE));
                         break;
                     default:
                         skip(parser);
